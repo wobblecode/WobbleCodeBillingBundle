@@ -1,0 +1,151 @@
+{% extends 'WobbleCodeBillingBundle::layout.html.twig' %}
+
+{% trans_default_domain 'BillingBundle_view' %}
+
+{% block app_content_title %}
+  {{ 'User.PaymentProfile.index.title'|trans }}
+{% endblock %}
+
+{% block app_content_content %}
+  <div class="row">
+    <div class="col-md-4 col-md-push-8">
+      <div class="alert alert-info">
+        <p>{{ 'User.PaymentProfile.index.message.side'|trans }}</p>
+      </div>
+    </div>
+
+    <div class="col-md-8 col-md-pull-4">
+
+      <p class="lead">{{ 'User.PaymentProfile.index.subtitle.main'|trans }}</p>
+
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#paymentProfiles" data-toggle="tab">{{ 'User.PaymentProfile.index.tab.paymentProfiles'|trans }}</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade active in" id="paymentProfiles">
+
+          <div class="panel-group" id="accordion-payment-profiles">
+
+            {% if entities %}
+              <p>This is how you will receive your earnings</p>
+            {% endif %}
+
+            {% if entities|length == 1 %}
+              {% set onlyOnePayment = true %}
+            {% else %}
+              {% set onlyOnePayment = false %}
+            {% endif %}
+
+            {% for paymentProfile in entities %}
+              <div class="panel panel-default">
+
+                <div class="panel-heading accordion-toggle" data-toggle="collapse" data-parent="#accordion-payment-profiles" data-target="#payment-profile-{{ paymentProfile.id }}">
+                  {{ paymentProfile.title }} <span class="text-muted">({{ paymentProfile.method }})</span>
+                  {% if organization.inboundPaymentProfile == paymentProfile %} <span class="label label-info pull-right">Default</span> {% endif %}
+                </div>
+
+                <div id="payment-profile-{{ paymentProfile.id }}" class="panel-collapse collapse {% if organization.inboundPaymentProfile == paymentProfile or onlyOnePayment %}in{% endif %}">
+                  <div class="panel-body">
+
+                    {% if paymentProfile.method == 'wireTransfer' %}
+                    {% set paymentProfileDetails = paymentProfile.paymentWireTransferProfile %}
+                    <ul class="list-unstyled">
+                      <li><b>Bank Name:</b> {{ paymentProfileDetails.bankName }}</li>
+                      <li><b>Bank Address:</b> {{ paymentProfileDetails.bankAddress }}  {{ paymentProfileDetails.bankCity }} {{ paymentProfileDetails.bankProvince }}</li>
+                      <li><b>Account holder:</b>  {{ paymentProfileDetails.beneficiaryAccountName }}</li>
+                      {% if paymentProfileDetails.iban %}
+                      <li><b>IBAN:</b> {{ paymentProfileDetails.iban }}</li>
+                      {% endif %}
+                      {% if paymentProfileDetails.swift %}
+                      <li><b>SWIFT:</b> {{ paymentProfileDetails.swift }}</li>
+                      {% endif %}
+                      {% if paymentProfileDetails.aba %}
+                      <li><b>ABA:</b> {{ paymentProfileDetails.aba }}</li>
+                      {% endif %}
+                      {% if paymentProfileDetails.routingBank %}
+                      <li><b>Routing Bank:</b> {{ paymentProfileDetails.routingBank }}</li>
+                      {% endif %}
+                      {% if paymentProfileDetails.notes %}
+                      <li><b>Notes:</b> {{ paymentProfileDetails.notes }}</li>
+                      {% endif %}
+                    </ul>
+                    {% endif %}
+
+                    {% if paymentProfile.method == 'paypal' %}
+                    {% set paymentProfileDetails = paymentProfile.paymentProfilePayPal %}
+                    <ul class="list-unstyled">
+                      {% if paymentProfileDetails.email %}
+                        <li><b>Email account:</b> {{paymentProfileDetails.email}}</li>
+                      {% endif %}
+                    </ul>
+                    {% endif %}
+
+                    {% if paymentProfile.method == 'creditCard' %}
+                    {% set paymentProfileDetails = paymentProfile.PaymentProfileCreditCard %}
+                    <ul class="list-unstyled">
+                      {% if paymentProfileDetails.title %}
+                        <li><b>Provider:</b> {{paymentProfileDetails.title}}</li>
+                      {% endif %}
+                    </ul>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                      <hr/>
+                      <small class="text-muted">This next info is only visible for rol: ADMIN</small>
+                      <ul class="list-unstyled">
+                        <li><b>System Method:</b> {{ paymentProfile.system ? 'Yes' : 'No'}}</li>
+                        <li><b>Enabled:</b> {{ paymentProfile.enabled ? 'Yes' : 'No'}}</li>
+                        <li><b>Fee Percentage:</b> {{paymentProfile.fee}} %</li>
+                        {% if paymentProfile.countryRestriction %}
+                        <li><b>Country Restriction:</b> {{paymentProfile.countryRestriction|merge(', ')}} %</li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+
+                    <hr/>
+
+                    <a href="{{ path('billing_payment-profile_edit', { 'id': paymentProfile.id }) }}" class="btn btn-primary">Edit</a>
+
+                    <form style="display: inline;" id="form_default_{{ default_form.vars.name  }}" action="{{ path('billing_payment-profile_set_default', { 'id': paymentProfile.id }) }}" method="post">
+                      <input type="hidden" name="_method" value="PUT" />
+                      {{ form_widget(default_form.id, {'value': paymentProfile.id})}}
+                      {{ form_rest(default_form) }}
+                      <button type="submit" class="btn btn-default">Set as Default</button>
+                    </form>
+
+                    <form class="pull-right" id="form_delete_{{ delete_form.vars.name  }}" action="{{ path('billing_payment-profile_delete', { 'id': paymentProfile.id }) }}" method="post">
+                      <input type="hidden" name="_method" value="DELETE" />
+                      {{ form_widget(delete_form.id, {'value': paymentProfile.id})}}
+                      {{ form_rest(delete_form) }}
+                      <button type="submit" class="btn btn-link text-danger pull-right"><i class="fa fa-times"></i> Delete</button>
+                    </form>
+
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="text-center">
+                <p class="lead mt">{{ 'User.PaymentProfile.index.message.noItems'|trans }}</p>
+                <div class="btn-xs-block">
+                  <a href="{{ path("billing_payment-profile_new", {'profileExtension': 'wireTransfer'}) }}" class="btn btn-lg btn-primary">
+                    <i class="fa fa-plus fa-fw"></i>
+                    {{ 'User.PaymentProfile.index.button.add'|trans }}
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+
+            {% if entities %}
+              <p class="text-center hmt">
+                <a href="{{ path("billing_payment-profile_new", {'profileExtension': 'wireTransfer'}) }}">+ Add another payment profile</a>
+              </p>
+            {% endif %}
+
+        </div><!-- Tab pane end -->
+
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

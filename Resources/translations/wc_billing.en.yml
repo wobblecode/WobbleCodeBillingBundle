@@ -1,0 +1,315 @@
+Invoice:
+    type:
+        label: Type
+        placeholder: ""
+        help: ""
+    issuedAt:
+        label: issuedAt
+        placeholder: ""
+        help: ""
+    status:
+        label: Status
+        placeholder: ""
+        help: ""
+        choices:
+            open: Open
+            unconfirmed: Unconfirmed
+            confirmed: Confirmed
+            paid: Paid
+            paidPartial: Paid Partial
+            canceled: Canceled
+            rejected: Rejected
+    ratio:
+        label: Ratio
+        placeholder: ""
+        help: ""
+    reference:
+        label: Reference
+        placeholder: ""
+        help: ""
+    issuer:
+        label: Issuer
+        placeholder: ""
+        help: ""
+    recipient:
+        label: Recipient
+        placeholder: ""
+        help: ""
+    chargeRequest:
+        label: Charge Request
+        placeholder: ""
+        help: ""
+    paymentRequest:
+        label: Payment Request
+        placeholder: ""
+        help: ""
+    organization:
+        label: Organization
+        placeholder: ""
+        help: ""
+    save:
+        label: Continue
+
+InvoiceStatement:
+    type:
+        label: Type
+        placeholder: ""
+        help: ""
+        choices:
+            unitary: "Unitary: Common statements"
+            general: "General: General % Eg: factoring"
+            taxes: "Taxes: Final % after all statements"
+    title:
+        label: Title
+        placeholder: ""
+        help: ""
+    amount:
+        label: Amount
+        placeholder: ""
+        help: ""
+    position:
+        label: Position
+        placeholder: ""
+        help: ""
+    invoice:
+        label: Invoice
+        placeholder: ""
+        help: ""
+    units:
+        label: Units
+        placeholder: ""
+        help: ""
+    save:
+        label: Continue
+
+CurrencyExchanges:
+    date:
+        label: Date
+        placeholder: ""
+        help: ""
+    baseCurrency:
+        label: Base Currency
+        placeholder: ""
+        help: ""
+    finalCurrency:
+        label: Final Currency
+        placeholder: ""
+        help: ""
+    ratio:
+        label: Ratio
+        placeholder: ""
+        help: ""
+    save:
+        label: Continue
+
+InvoiceProfile:
+    refId:
+        label: Ref ID
+        placeholder: "Eg: 1"
+        help: ""
+    organization:
+        label: Organization
+        placeholder: ""
+        help: ""
+    refPattern:
+        label: Ref Pattern
+        placeholder: "Eg: REF-{{ refId }}"
+        help: "The {{ refId }} must be present in the pattern"
+    save:
+        label: Continue
+
+AccountStatement:
+    title:
+        label: Title
+        placeholder: ""
+        help: ""
+    type:
+        label: Type
+        placeholder: ""
+        help: ""
+    description:
+        label: Description
+        placeholder: ""
+        help: ""
+    amount:
+        label: Amount
+        placeholder: ""
+        help: ""
+    effectiveAt:
+        label: Effective At
+        placeholder: ""
+        help: ""
+    account:
+        label: Account
+        placeholder: ""
+        help: ""
+    save:
+        label: Save
+
+Account:
+    type:
+        label: Type
+        placeholder: ""
+        help: ""
+    currency:
+        label: Currency
+        placeholder: ""
+        help: ""
+    available:
+        label: Available
+        placeholder: ""
+        help: ""
+    debt:
+        label: Debt Acumulated
+        placeholder: ""
+        help: ""
+    organization:
+        label: Organization
+        placeholder: ""
+        help: ""
+    total:
+        label: Total
+        placeholder: ""
+        help: ""
+    save:
+        label: Save
+
+InvoiceProfile:
+    refId:
+        label: Ref ID
+        placeholder: "Eg: 1"
+        help: ""
+    organization:
+        label: Organization
+        placeholder: ""
+        help: ""
+    refPattern:
+        label: Ref Pattern
+        placeholder: "Eg: REF-{{ refId }}"
+        help: "The {{ refId }} must be present in the pattern"
+    save:
+        label: Continue
+
+ChargeRequestUser:
+    amount:
+        label: Amount
+        placeholder: "Eg: 100"
+        help: ""
+    paymentProfile:
+        label: Payment Method
+        placeholder: ""
+        help: ""
+    save:
+        label: Continue
+
+ChargeRequest:
+    amount:
+        label: Amount
+        placeholder: "Eg: 100"
+        help: ""
+    organization:
+        label: Organization
+        placeholder: ""
+        help: ""
+    paymentProfile:
+        label: Payment Profile
+        placeholder: ""
+        help: ""
+    profile:
+        label: Payment Profile Method
+        placeholder: ""
+        help: ""
+    taxPercentage:
+        label: Tax Percentage
+        placeholder: ""
+        help: ""
+    details:
+        label: Details
+        placeholder: ""
+        help: ""
+    invoice:
+        label: Invoice
+        placeholder: ""
+        help: ""
+    status:
+        label: Status
+        placeholder: ""
+        help: ""
+    save:
+        label: Continue
+
+PaymentProfile:
+    key:
+        label: Key
+        placeholder: "Eg: stripe"
+        help: "Lower case and no spaces. This is used to compose translation keys"
+    order:
+        label: Order
+        placeholder: ""
+        help: "Defines the order of listing to the user"
+    type:
+        label: Type
+        placeholder: ""
+        help: "Defines the order of listing to the user"
+        choice:
+            inbound: Inbound - Received payments from end-users
+            outbound: Outbound - Make payments to end-users
+    service:
+        label: Service
+        placeholder: ""
+        help: "If required a symfony service to use as gateway"
+    params:
+        label: Extra params
+        placeholder: ""
+        help: "JSON extra settings for custom profile parameters"
+    title:
+        label: Title
+        placeholder: ""
+        help: ""
+    description:
+        label: Description
+        placeholder: ""
+        help: ""
+    method:
+        label: Method
+        placeholder: ""
+        help: ""
+    enabled:
+        label: Enabled
+        placeholder: ""
+        help: ""
+    enabledByDefault:
+        label: Enabled by default
+        placeholder: ""
+        help: ""
+    system:
+        label: System
+        placeholder: ""
+        help: "Is a global system payment"
+    method:
+        label: Type
+        placeholder: ""
+        help: "Inbound to receive payments"
+        choice:
+            inbound: Inbound
+            outbound: Outbound
+    countryTaxRules:
+        label: Country Tax Rules
+        placeholder: ""
+        help: "JSON format"
+    service:
+        label: Service
+        placeholder: ""
+        help: JSON format
+    params:
+        label: Params
+        placeholder: ""
+        help: "JSON format"
+    organization:
+        label: Organization
+        placeholder: ""
+        help: ""
+    save:
+        label: Save
+        placeholder: ""
+        help: ""

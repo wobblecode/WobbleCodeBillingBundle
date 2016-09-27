@@ -1,0 +1,85 @@
+{% extends 'WobbleCodeBillingBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.User.ChargeRequest.new.title'|trans }}
+{% endblock %}
+
+{% set availableFormat = available|number_format(2, ',', '.') %}
+{% set requiredAmountFormat = requiredAmount|number_format(2, ',', '.') %}
+{% set difference =  (requiredAmount - available)|number_format(2, ',', '.') %}
+
+{% block app_content_content %}
+<div class="row">
+
+  <div class="col-md-4 col-md-push-8">
+    <div class="summarize-box primary summarize-corner">
+      <h2>{{ availableFormat }} €</h2>
+      <p>{{ 'WobbleCodeBilling.view.User.ChargeRequest.new.currentBalance'|trans }}</p>
+    </div>
+  </div><!-- end of col -->
+
+  <div class="col-md-8 col-md-pull-4">
+
+    {% if difference > 0 %}
+    <div class="alert alert-warning">
+      <h4>{{ 'WobbleCodeBilling.view.User.ChargeRequest.new.requiredAmount.title'|trans }}</h4>
+      <p>
+        {% if available %}
+          {{ 'WobbleCodeBilling.view.User.ChargeRequest.new.requiredAmount.messageWithCredit'|trans({
+            '%available%': availableFormat,
+            '%requiredAmount%': requiredAmountFormat,
+            '%difference%': difference
+          })|raw }}
+        {% else %}
+          {{ 'WobbleCodeBilling.view.User.ChargeRequest.new.requiredAmount.messageNoCredit'|trans({
+          '%available%': availableFormat,
+          '%requiredAmount%': requiredAmountFormat,
+          '%difference%': difference
+          })|raw }}
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+
+    <p class="lead">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.new.subtitleAmount'|trans }}
+    </p>
+
+    <p class="">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.new.amountHelp'|trans }}
+    </p>
+
+      <form action="{{ path('billing_charge-request_create') }}" method="post" {{ form_enctype(form) }}>
+
+      <div class="row">
+        <div class="col-sm-5">
+          {{ form_start(form) }}
+          {{ form_errors(form) }}
+          {{ form_row(form.amount) }}
+          {{ form_row(form._token) }}
+        </div>
+      </div>
+
+      <p class="lead">{{ 'WobbleCodeBilling.view.User.ChargeRequest.new.subtitleMethod'|trans }}</p>
+
+      <div class="row">
+
+        {% for paymentProfile in paymentProfiles %}
+        <div class="form-group col-sm-4">
+          <button type="submit"
+            value="{{ paymentProfile.id }}"
+            name="method_option" class="btn btn-block summarize-box">
+            <h3>{{ ('WobbleCodeBilling.view.User.ChargeRequest.new.button.'~ paymentProfile.method)|trans }}</h3>
+            <p class="text-muted">{{ 'WobbleCodeBilling.view.User.ChargeRequest.new.noFee'|trans }}</p>
+          </button>
+        </div>
+        {% endfor %}
+
+      </div>
+      <small class="text-muted mb">{{ 'WobbleCodeBilling.view.User.ChargeRequest.new.methodHelp'|trans }}</small>
+
+    </form>
+  </div><!-- end of col -->
+
+</div>
+{% endblock %}

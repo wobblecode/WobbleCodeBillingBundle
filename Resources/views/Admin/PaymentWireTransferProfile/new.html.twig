@@ -1,0 +1,20 @@
+{% extends 'WobbleCodeAdminBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.Admin.PaymentWireTransferProfile.new.title'|trans }}
+{% endblock %}
+
+{% block app_content_content %}
+  <div class="row">
+    <div class="col-sm-7">
+      <p class="lead"> {{ 'WobbleCodeBilling.view.Admin.PaymentWireTransferProfile.new.subtitle'|trans }}</p>
+
+      <form action="{{ path('admin_billing_payment-profile_wiretransfer_create', {'paymentProfile': paymentProfile.id}) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+        <hr/>
+        <button class="btn btn-primary" type="submit">{{ 'WobbleCodeBilling.view.Admin.PaymentWireTransferProfile.new.button.create'|trans }}</button>
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

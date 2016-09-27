@@ -1,0 +1,32 @@
+{% extends 'WobbleCodeAdminBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.Admin.InvoiceStatement.edit.title'|trans({'%id%': entity.id}) }}
+{% endblock %}
+
+{% block app_content_content %}
+
+  <div class="row">
+    <div class="col-sm-7">
+      <p class="lead">{{ 'WobbleCodeBilling.view.Admin.InvoiceStatement.edit.subtitle'|trans({'%id%': entity.id}) }}</p>
+
+      <form action="{{ path('admin_billing_invoice-statement_update', {'invoice': invoice.id, 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+        <input type="hidden" name="_method" value="PUT" />
+        {{ form_widget(edit_form) }}
+      <hr/>
+        <button class="btn btn-primary" type="submit">{{ 'WobbleCodeBilling.view.Admin.InvoiceStatement.edit.button.edit'|trans }}</button>
+        <a class="btn btn-link" href="{{ path('admin_billing_invoice_show', {'id': invoice.id}) }}#statements">
+          {{ 'WobbleCodeBilling.view.Admin.InvoiceStatement.edit.link.back'|trans }}
+        </a>
+        <button onclick="$('#form_delete_{{ delete_form.vars.name  }}').submit();" class="btn btn-danger pull-right" type="submit">{{ 'WobbleCodeBilling.view.Admin.InvoiceStatement.edit.button.delete'|trans }}</button>
+      </form>
+
+      <form id="form_delete_{{ delete_form.vars.name  }}" action="{{ path('admin_billing_invoice-statement_delete', {'invoice': invoice.id, 'id': entity.id }) }}" method="post">
+        <input type="hidden" name="_method" value="DELETE" />
+        {{ form_widget(delete_form) }}
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

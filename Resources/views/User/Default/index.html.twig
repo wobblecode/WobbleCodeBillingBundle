@@ -1,0 +1,41 @@
+{% extends 'WobbleCodeBillingBundle::layout.html.twig' %}
+
+{% block app_content_header %}
+{% endblock %}
+
+{% block app_content_content %}
+<div class="jumbotron text-center mt">
+  <h2>TODO billing dashboard</h2>
+  <p>
+    quick links and basic info
+  </p>
+</div>
+
+<div class="row">
+  <div class="col-sm-4">
+    <a href="#">
+    <div class="summarize-box">
+      <i class="fl fl-stack fl-lg hmb hmt"></i>
+      <p>View your Invoices</p>
+    </div>
+    </a>
+  </div>
+  <div class="col-sm-4">
+    <a href="#">
+    <div class="summarize-box">
+      <i class="fl fl-shop fl-lg hmb hmt"></i>
+      <p>Make a deposit…</p>
+    </div>
+    </a>
+  </div>
+
+  <div class="col-sm-4">
+    <a href="#">
+    <div class="summarize-box">
+      <i class="fl fl-banknote fl-lg hmb hmt"></i>
+      <p>Withdraw your earnings</p>
+    </div>
+    </a>
+  </div>
+</div>
+{% endblock %}

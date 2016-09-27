@@ -1,0 +1,24 @@
+{% extends 'WobbleCodeAdminBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.Admin.ChargeRequest.new.title'|trans }}
+{% endblock %}
+
+{% block app_content_content %}
+  <div class="row">
+    <div class="col-sm-7">
+      <p class="lead"> {{ 'WobbleCodeBilling.view.Admin.ChargeRequest.new.subtitle'|trans }}</p>
+
+      <form action="{{ path('admin_billing_charge-request_create') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        <hr/>
+        <button class="btn btn-primary" type="submit">{{ 'WobbleCodeBilling.view.Admin.ChargeRequest.new.button.create'|trans }}</button>
+        <a class="btn btn-link" href="{{ path('admin_billing_charge-request') }}">
+          {{ 'WobbleCodeBilling.view.Admin.ChargeRequest.new.link.back'|trans }}
+        </a>
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

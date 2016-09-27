@@ -1,0 +1,20 @@
+{
+    "name": "wobblecode/billing-bundle",
+    "description": "[WIP] Billing common documents and features",
+    "license": "MIT",
+    "type": "bundle",
+    "autoload": {
+        "psr-0": {
+            "": "src/",
+            "SymfonyStandard": "app/"
+        },
+        "psr-4": {
+            "WobbleCode\\BillingBundle\\": ""
+        }
+    },
+    "require": {
+        "php": "^5.6|^7.0",
+        "symfony/symfony": "~2.8|~3.0"
+    }
+  }
+}

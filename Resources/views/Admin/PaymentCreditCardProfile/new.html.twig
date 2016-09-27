@@ -1,0 +1,24 @@
+{% extends 'WobbleCodeAdminBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.Admin.PaymentProfileCreditCard.new.title'|trans }}
+{% endblock %}
+
+{% block app_content_content %}
+  <div class="row">
+    <div class="col-sm-7">
+      <p class="lead"> {{ 'WobbleCodeBilling.view.Admin.PaymentProfileCreditCard.new.subtitle'|trans }}</p>
+
+      <form action="{{ path('admin_billing_payment-profile_{id}_credit-card_create') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        <hr/>
+        <button class="btn btn-primary" type="submit">{{ 'WobbleCodeBilling.view.Admin.PaymentProfileCreditCard.new.button.create'|trans }}</button>
+        <a class="btn btn-link" href="{{ path('admin_billing_payment-profile_{id}_credit-card') }}">
+          {{ 'WobbleCodeBilling.view.Admin.PaymentProfileCreditCard.new.link.back'|trans }}
+        </a>
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

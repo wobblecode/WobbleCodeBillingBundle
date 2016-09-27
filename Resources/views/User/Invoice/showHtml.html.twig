@@ -1,0 +1,241 @@
+{% extends 'WobbleCodeControlUserInterfaceBundle::layout_app_admin.html.twig' %}
+
+{% block body_attr_class %}
+  layout-topbar-closed
+  layout-left-menu-closed
+  layout-left-sidebar-closed
+  layout-right-menu-closed
+  layout-right-sidebar-closed
+{% endblock %}
+
+{% block head_inline_styles %}
+{{ parent() }}
+<style type="text/css">
+
+  .invoice {
+    max-width: 1000px;
+  }
+
+  .invoice-logo {
+    margin-top: -8px;
+    margin-left: -10px;
+  }
+
+  .select-all-header-cell {
+    width: 36px;
+  }
+
+  .col-id {
+    width: 54px;
+  }
+
+  .col-time {
+    width: 110px;
+    text-align: left;
+  }
+
+  .col-amount {
+    width: 130px;
+  }
+
+
+
+</style>
+{% endblock %}
+
+{% block app_content_header %}
+{% endblock %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeUser.view.User.Organization.firstTypeSelection.title'|trans({'%organization.name%': organization.contactName}) }}
+{% endblock %}
+
+{% block body_content %}
+<div class="container invoice">
+  <div class="page-header">
+    <h2 class="pull-left">
+      <img src="{{ asset('bundles/wobblecodecontroluserinterface/images/logo-black.png') }}" alt="" class="invoice-logo">
+    </h2>
+    <h2 class="pull-right"><span class="text-muted">Invoice<span> Ref: {{entity.reference}}</h2>
+    <div class="clearfix"></div>
+  </div>
+
+  <!-- Issuer -->
+  <div class="row">
+  {% if entity.issuer is not null %}
+    <address class="col-xs-6">
+      <strong>Issuer:</strong> {{entity.issuer.name}}<br>
+      {% if entity.issuer.documentType is not null %}
+      <strong>{{entity.issuer.documentType}}:</strong> {{entity.issuer.documentId}}<br>
+      {% endif %}
+      {% if entity.issuer.address is not null %}
+      <strong>Address:</strong> {{entity.issuer.address}}<br>
+      {% endif %}
+      {% if entity.issuer.zip %}
+      <strong>Zip:</strong> {{entity.issuer.zip}}<br>
+      {% endif %}
+      <strong>Date:</strong> {{entity.createdAt|date('Y-m-d')}}<br>
+    </address>
+  {% endif %}
+
+  <!-- Receiver -->
+  {% if entity.recipient is not null %}
+    <address class="col-xs-6">
+      <strong>Customer:</strong> {{entity.recipient.name}}<br>
+      {% if entity.recipient.documentType is not null %}
+      <strong>{{entity.recipient.documentType}}:</strong> {{entity.recipient.documentId}}<br>
+      {% endif %}
+      {% if entity.recipient.address is not null %}
+      <strong>Address:</strong> {{entity.recipient.address}}<br>
+      {% endif %}
+      {% if entity.recipient.zip %}
+      <strong>Zip:</strong> {{entity.recipient.zip}}<br>
+      {% endif %}
+    </address>
+  {% endif %}
+  </div>
+
+  <!-- Statements -->
+  <table class="table table-datagrid">
+    <thead>
+      <tr>
+        <th>Detail</th>
+        <th class="text-center">Units</th>
+        <th class="text-right">Amount U.</th>
+        <th class="text-right">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set total = 0 %}
+
+      {# Unitary statements #}
+      {% for statement in entity.statements %}
+        {% if statement.type == 'unitary' %}
+        <tr>
+          <td>{{statement.title}}</td>
+          <td class="text-center">{{statement.units}}</td>
+          <td class="text-right">{{statement.amount|number_format(2, ',', '.', '')}} €</td>
+          <td class="text-right
+          {% if statement.units * statement.amount > 0 %}
+          {% elseif statement.units * statement.amount < 0 %}
+            text-danger
+          {% else %}
+            text-muted
+          {% endif %}
+          ">{{(statement.units * statement.amount)|number_format(2, ',', '.', '')}} €</td>
+        </tr>
+        {% set total = total + (statement.units * statement.amount) %}
+        {% endif %}
+      {% endfor %}
+
+      <tr>
+        <td colspan="3" class="text-muted text-right">Subtotal: </td>
+        <td class="text-right
+        {% if total > 0 %}
+        {% elseif total < 0 %}
+          text-danger
+        {% else %}
+          text-muted
+        {% endif %}">{{ entity.unitarySum|number_format(2, ',', '.', '') }} €</td>
+      </tr>
+      {# End of unitary statements #}
+
+      {% for statement in entity.statements %}
+      {% if statement.type == 'general' %}
+      <tr>
+        <td colspan="3"  class="text-right">{{statement.title}}: {{statement.amount|number_format(2)}}{{'%'}}</td>
+        <td class="text-right">{{(total * (statement.amount / 100))|number_format(2, ',', '.', '')}} €</td>
+      </tr>
+      {% set total = total + (total * (statement.amount / 100)) %}
+      {% endif %}
+      {% endfor %}
+      <tr>
+        <td colspan="3" class="text-muted text-right">Tax base: </td>
+        <td class="total text-right
+        {% if total > 0 %}
+          text-success
+        {% elseif total < 0 %}
+          text-danger
+        {% else %}
+          text-muted
+        {% endif %}
+        ">{{ entity.total|number_format(2, ',', '.', '') }} €</td>
+      </tr>
+
+      {% for statement in entity.statements %}
+      {% if statement.type == 'taxes' %}
+      <tr>
+        <td colspan="3"  class="text-right">{{statement.title}}: {{statement.amount|number_format(2)}}{{'%'}}</td>
+        <td class="text-right">{{(total * (statement.amount / 100))|number_format(2, ',', '.', '')}} €</td>
+      </tr>
+      {% set total = total + (total * (statement.amount / 100)) %}
+      {% endif %}
+      {% endfor %}
+      <tr>
+        <td colspan="3" class="text-muted text-right"><h4>Total: </h4></td>
+        <td class="total text-right
+        {% if total > 0 %}
+          text-success
+        {% elseif total < 0 %}
+          text-danger
+        {% else %}
+          text-muted
+        {% endif %}
+        "><h4>{{entity.totalWithTaxes|number_format(2, ',', '.', '')}} €<h4></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- Payment Details -->
+  <div class="row">
+    <div class="col-sm-4">
+      <h4>Payment Details</h4>
+      {% if entity.paymentProfile.method == 'wireTransfer' %}
+      {% set paymentProfile = entity.paymentProfile.paymentWireTransferProfile %}
+      <ul class="list-unstyled">
+        <li><b>Method:</b> WIRE TRANSFER</li>
+        <li><b>Bank Name:</b> {{ paymentProfile.bankName }}</li>
+        <li><b>Bank Address:</b> {{ paymentProfile.bankAddress }}  {{ paymentProfile.bankCity }} {{ paymentProfile.bankProvince }}</li>
+        <li><b>Account holder:</b>  {{ paymentProfile.beneficiaryAccountName }}</li>
+        {% if paymentProfile.iban %}
+        <li><b>IBAN:</b> {{ paymentProfile.iban }}</li>
+        {% endif %}
+        {% if paymentProfile.swift %}
+        <li><b>SWIFT:</b> {{ paymentProfile.swift }}</li>
+        {% endif %}
+        {% if paymentProfile.aba %}
+        <li><b>ABA:</b> {{ paymentProfile.aba }}</li>
+        {% endif %}
+        {% if paymentProfile.routingBank %}
+        <li><b>Routing Bank:</b> {{ paymentProfile.routingBank }}</li>
+        {% endif %}
+        {% if paymentProfile.notes %}
+        <li><b>Notes:</b> {{ paymentProfile.notes }}</li>
+        {% endif %}
+      </ul>
+      {% endif %}
+
+      {% if entity.paymentProfile.method == 'paypal' %}
+      {% set paymentProfile = entity.paymentProfile.paymentProfilePayPal %}
+      <ul class="list-unstyled">
+        <li><b>Method:</b> PayPal {% if paymentProfile.title %}({{paymentProfile.title}}){% endif %}</li>
+      </ul>
+      {% endif %}
+
+      {% if entity.paymentProfile.method == 'creditCard' %}
+      {% set paymentProfile = entity.paymentProfile.PaymentProfileCreditCard %}
+      <ul class="list-unstyled">
+        <li><b>Method:</b> Credit Card {% if paymentProfile.title %}({{paymentProfile.title}}){% endif %}</li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+  <hr/>
+
+  <small>Your can check this invoice using the next URL:</small></br>
+  <a class="mb" href="{{ url('open_billing_invoice_show_html', {'hash': entity.hash}) }}">
+    <small>{{ url('open_billing_invoice_show_html', {'hash': entity.hash}) }}</small>
+  </a>
+</div>
+{% endblock %}

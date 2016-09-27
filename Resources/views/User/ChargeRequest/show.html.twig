@@ -1,0 +1,193 @@
+{% extends 'WobbleCodeBillingBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.title'|trans({'%publicReference%': chargeRequest.publicReference}) }}
+{% endblock %}
+
+{% set amountFormat = chargeRequest.amount|number_format(2, ',', '.') %}
+{% set feePercentageFormat = chargeRequest.feePercentage|number_format(2, ',', '.') %}
+{% set feeAmount =  chargeRequest.feePercentage * chargeRequest.amount / 100 %}
+{% set feeAmountFormat =  feeAmount|number_format(2, ',', '.') %}
+{% set finalAmountFormat = (feeAmount + chargeRequest.amount)|number_format(2, ',', '.') %}
+
+{% block app_content_content %}
+<div class="row">
+  <div class="col-sm-8 col-sm-push-2">
+
+  {# TODO apply refactoring and reduce to one statement #}
+  {% if chargeRequest.status == 'unconfirmed' %}
+
+    <p class="lead mt">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.subtitle.unconfirmed'|trans({'%publicReference%': chargeRequest.publicReference}) }}
+    </p>
+    <div class="alert alert-info">
+    {{ ('WobbleCodeBilling.view.User.ChargeRequest.show.message.unconfirmed.' ~ chargeRequest.method)|trans({'%method%': chargeRequest.method})|raw }}
+    </div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'confirmed' %}
+    <p class="lead mt">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.subtitle.confirmed'|trans({'%publicReference%': chargeRequest.publicReference}) }}
+    </p>
+    <div class="alert alert-info">
+    {{ ('WobbleCodeBilling.view.User.ChargeRequest.show.message.confirmed.' ~ chargeRequest.method)|trans({'%method%': chargeRequest.method})|raw }}
+    </div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'completed' %}
+    <p class="lead mt">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.subtitle.completed'|trans({'%publicReference%': chargeRequest.publicReference}) }}
+    </p>
+    <div class="alert alert-success">
+    {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.message.completed'|trans({'%method%': chargeRequest.method})|raw }}
+    </div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'canceled' %}
+    <p class="lead mt">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.subtitle.canceled'|trans({'%publicReference%': chargeRequest.publicReference}) }}
+    </p>
+    <div class="alert alert-warning">
+    {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.message.canceled'|trans({'%method%': chargeRequest.method})|raw }}
+    </div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'rejected' %}
+    <p class="lead mt">
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.subtitle.rejected'|trans({'%publicReference%': chargeRequest.publicReference}) }}
+    </p>
+    <div class="alert alert-danger">
+    {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.message.rejected'|trans({'%method%': chargeRequest.method})|raw }}
+    </div>
+  {% endif %}
+
+
+  <!-- Issuer -->
+    <p>
+      This is your current invoice info, please reivew before confirm, or
+      <a href="#">change billing profile here</a>
+
+      {% set contact = chargeRequest.organization.contact %}
+      <address>
+        <strong>{{chargeRequest.organization.contactName}}</strong><br>
+        {{ chargeRequest.organization.contact.type == 'company' ? 'Tax/VAT ID' : 'Document ID' }}: {{contact.documentId}}<br>
+        {{contact.address}}<br>
+        {{contact.zip }} - {{contact.province}} {{contact.city}}, {{contact.country}}<br>
+        {% if contact.phone %}<abbr title="Phone"><i class="fa fa-phone"></i>: </abbr> {{contact.phone}}{% endif %}
+        {% if contact.cellPhone %}<abbr title="Cell Phone"><i class="fa fa-mobile-phone"></i>: </abbr> {{contact.cellPhone}}{% endif %}
+      </address>
+    </p>
+
+  <div class="table-resposnive">
+   <table class="table table-datagrid">
+    <thead>
+      <tr>
+        <th>{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.preview.description'|trans }}</th>
+        <th class="text-right">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.preview.amount'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ ('WobbleCodeBilling.common.statement.marketing.chargeRequest.'~ chargeRequest.method)|trans }}</td>
+        <td class="text-right">{{ amountFormat }} €</td>
+      </tr>
+      {% if feeAmount > 0 %}
+      <tr>
+        <td>{{ ('WobbleCodeBilling.common.statement.marketing.chargeRequest.'~ chargeRequest.method ~ '.fee')|trans({'%feePercentage%': feePercentageFormat }) }} %</td>
+        <td class="text-right">{{ feeAmountFormat }} €</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td colspan="2" class="text-right"><h3 class="text-muted">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.preview.total'|trans }} <span class="text-success">{{ finalAmountFormat }} €</span></h3></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  {% if chargeRequest.method == 'wireTransfer' and chargeRequest.status in ['unconfirmed', 'confirmed'] %}
+    <p class="lead mt">
+    {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.subtitle'|trans }}
+    <p>
+
+    {% if chargeRequest.status in ['unconfirmed', 'confirmed'] %}
+    <p>
+      {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.actionInfo'|trans }}
+    </p>
+    {% endif %}
+
+    <div class="table-responsive">
+      <table class="table table-datagrid">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="text-right"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.bank.title'|trans }}</td>
+            <td class="text-right">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.bank.detail'|trans }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.accountName.title'|trans }}</td>
+            <td class="text-right">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.accountName.detail'|trans }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.iban.title'|trans }}</td>
+            <td class="text-right">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.iban.detail'|trans }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.swift.title'|trans }}</td>
+            <td class="text-right">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.swift.detail'|trans }}</td>
+          </tr>
+          <tr>
+            <td>{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.comment.title'|trans }}</td>
+            <td class="text-right">
+            {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.info.comment.detail'|trans({'%ref%': chargeRequest.publicReference}) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    {% if chargeRequest.status in ['unconfirmed', 'confirmed'] %}
+    <p class="text-danger text-center">
+      <b>
+        {{ 'WobbleCodeBilling.view.User.ChargeRequest.show.wireTransfer.commentAlert'|trans }}
+      </b>
+    </p>
+    {% endif %}
+
+  {% endif %}
+
+  {# TODO apply refactoring and reduce to one statement also use form post for this actions #}
+  {% if chargeRequest.status == 'unconfirmed' %}
+    <a href="{{ path('billing_charge-request_confirm', {'publicReference': chargeRequest.publicReference}) }}" class="btn btn-lg btn-block btn-primary">{{ ('WobbleCodeBilling.view.User.ChargeRequest.show.button.unconfirmed.' ~ chargeRequest.method)|trans }}</a>
+    <div class="text-center mt"><a href="{{ path('billing_charge-request_cancel', {'publicReference': chargeRequest.publicReference}) }}">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.link.cancel.unconfirmed'|trans }}</a></div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'confirmed' %}
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('billing_charge-request_execute', {'publicReference': chargeRequest.publicReference}) }}" class="btn btn-lg btn-block btn-warning mb">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.button.adminExecute'|trans }}</a>
+    {% endif %}
+    <a href="{{ path('billing_account_marketing_balance') }}" class="btn btn-lg btn-block btn-default">{{ ('WobbleCodeBilling.view.User.ChargeRequest.show.button.confirmed.' ~ chargeRequest.method)|trans }}</a>
+    <div class="text-center mt"><a class="text-danger" href="{{ path('billing_charge-request_cancel', {'publicReference': chargeRequest.publicReference}) }}">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.link.cancel.wireTransferConfirmed'|trans }}</a></div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'completed' %}
+    <a href="{{ path('billing_charge-request_new') }}" class="btn btn-lg btn-block btn-primary">{{ ('WobbleCodeBilling.view.User.ChargeRequest.show.button.completed.' ~ chargeRequest.method)|trans }}</a>
+    <div class="text-center mt"><a href="{{ path('billing_charge-request_new') }}">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.link.cancel.completed'|trans }}</a></div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'canceled' %}
+    <a href="{{ path('billing_charge-request_new') }}" class="btn btn-lg btn-block btn-default">{{ ('WobbleCodeBilling.view.User.ChargeRequest.show.button.canceled.' ~ chargeRequest.method)|trans }}</a>
+    <div class="text-center mt"><a href="{{ path('billing_account_marketing_balance') }}">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.link.cancel.canceled'|trans }}</a></div>
+  {% endif %}
+
+  {% if chargeRequest.status == 'rejected' %}
+    <a href="{{ path('billing_charge-request_new') }}" class="btn btn-lg btn-block btn-default">{{ ('WobbleCodeBilling.view.User.ChargeRequest.show.button.rejected.' ~ chargeRequest.method)|trans }}</a>
+    <div class="text-center mt"><a href="{{ path('billing_account_marketing_balance') }}">{{ 'WobbleCodeBilling.view.User.ChargeRequest.show.link.cancel.rejected'|trans }}</a></div>
+  {% endif %}
+
+  </div>
+</div>
+{% endblock %}

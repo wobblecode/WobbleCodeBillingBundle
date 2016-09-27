@@ -1,0 +1,73 @@
+{% extends 'WobbleCodeBillingBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.User.AccountStatement.show.title'|trans({'%id%': entity.id}) }}
+{% endblock %}
+
+{% block app_content_content %}
+<div class="row">
+
+  <div class="col-md-4 col-md-push-8">
+    <ul class="list-group list-flat">
+      <li class="list-group-item list-title"><h5>{{ "common.metadata.title"|trans }}</h5></li>
+      <li class="list-group-item">{{ "common.metadata.created_at"|trans }} <span data-toggle="tooltip" title="{{ entity.createdAt|date('Y-m-d H:i:s') }}">{{ entity.createdAt|date('Y-m-d') }}</span></li>
+      {% if entity.updatedAt %}
+      <li class="list-group-item">{{ "common.metadata.updated_at"|trans }} <span data-toggle="tooltip" title="{{ entity.updatedAt|date('Y-m-d H:i:s') }}">{{ entity.updatedAt|date('Y-m-d') }}</span></li>
+      {% endif %}
+      {% if entity.createdBy %}
+      <li class="list-group-item">{{ "common.metadata.created_by"|trans }} {{ entity.createdBy.username }}</li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <div class="col-md-8 col-md-pull-4">
+    <p class="lead">{{ 'WobbleCodeBilling.view.User.AccountStatement.show.subtitle'|trans({'%id%': entity.id}) }}</p>
+
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#general" data-toggle="tab">{{ "common.view.show.general.tab"|trans }}</a></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade active in" id="general">
+          <div class="table-responsive">
+            <table class="table table-list">
+              <tbody>
+              <tr>
+                  <th>{{ 'WobbleCodeBilling.view.User.AccountStatement.show.field.id'|trans }}</th><td>{{ entity.id }}</td>
+              </tr>
+              <tr>
+                  <th>{{ 'WobbleCodeBilling.view.User.AccountStatement.show.field.title'|trans }}</th><td>{{ entity.title }}</td>
+              </tr>
+              <tr>
+                  <th>{{ 'WobbleCodeBilling.view.User.AccountStatement.show.field.type'|trans }}</th><td>{{ entity.type }}</td>
+              </tr>
+              <tr>
+                  <th>{{ 'WobbleCodeBilling.view.User.AccountStatement.show.field.description'|trans }}</th><td>{{ entity.description }}</td>
+              </tr>
+              <tr>
+                  <th>{{ 'WobbleCodeBilling.view.User.AccountStatement.show.field.amount'|trans }}</th><td>{{ entity.amount|number_format(2, ',', '.') }} €</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <hr/>
+
+          {% if entity.account.type == 'marketing' %}
+            <a class="btn btn-link" href="{{ path('billing_account_marketing_balance', {'type': entity.account.type}) }}">
+              {{ 'WobbleCodeBilling.view.User.AccountStatement.show.link.back'|trans }}
+            </a>
+          {% endif %}
+
+          {% if entity.account.type == 'payments' %}
+            <a class="btn btn-link" href="{{ path('billing_account_payments_balance', {'type': entity.account.type}) }}">
+              {{ 'WobbleCodeBilling.view.User.AccountStatement.show.link.back'|trans }}
+            </a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

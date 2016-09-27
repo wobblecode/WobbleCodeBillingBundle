@@ -1,0 +1,33 @@
+{% extends 'WobbleCodeBillingBundle::layout.html.twig' %}
+
+{% trans_default_domain 'BillingBundle_view' %}
+
+{% block app_content_title %}
+  {{ 'User.PaymentProfile.new.title'|trans }}
+{% endblock %}
+
+{% block app_content_content %}
+  <div class="row">
+    <div class="col-sm-7">
+      <p class="lead"> {{ 'User.PaymentProfile.new.subtitle'|trans }}</p>
+
+      <form action="{{ path('billing_payment-profile_create', {'profileExtension': profileExtension }) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        <hr/>
+        <button class="btn btn-primary" type="submit">{{ 'User.PaymentProfile.new.button.create'|trans }}</button>
+        <a class="btn btn-link" href="{{ path('billing_payment-profile') }}">
+          {{ 'User.PaymentProfile.new.link.back'|trans }}
+        </a>
+      </form>
+
+      {# TODO this should be improved and the type could be extended using ajax #}
+      <script tyle="text/javascript">
+        $('#wobblecode_bundle_billingbundle_paymentprofile_method').on('change', function(val){
+          var route = Routing.generate( 'billing_payment-profile_new', { profileExtension: $(this).val() });
+          window.location.href=route;
+        })
+      </script>
+    </div>
+  </div>
+{% endblock %}

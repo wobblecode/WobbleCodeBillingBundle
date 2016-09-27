@@ -1,0 +1,70 @@
+services:
+    wobblecode_billing.payment_profile_manager:
+        class: WobbleCode\BillingBundle\Manager\PaymentProfileManager
+        parent: wobblecode_manager.document_manager
+        calls:
+            - [setDocument, ["WobbleCodeBillingBundle:PaymentProfile"]]
+
+    wobblecode_billing.invoice_profile_manager:
+        class: WobbleCode\BillingBundle\Manager\InvoiceProfileManager
+        parent: wobblecode_manager.document_manager
+        calls:
+            - [setDocument, ["WobbleCodeBillingBundle:InvoiceProfile"]]
+
+    wobblecode_billing.invoice_manager:
+        class: WobbleCode\BillingBundle\Manager\InvoiceManager
+        parent: wobblecode_manager.document_manager
+        calls:
+            - [setDocument, ["WobbleCodeBillingBundle:Invoice"]]
+            - [setSnappyPdf, ["@knp_snappy.pdf"]]
+            - [setRouter, ["@router"]]
+            - [setPdfPath, ["%wobble_code_billing.invoice.pdf_path%"]]
+            - [setGaufrette, ["?@knp_gaufrette.filesystem_map"]]
+
+    wobblecode_billing.account_manager:
+        class: WobbleCode\BillingBundle\Manager\AccountManager
+        parent: wobblecode_manager.document_manager
+        calls:
+            - [setDocument, [%wobble_code_user.class.organization%]]
+
+    wobblecode_billing.charge_request_manager:
+        class: WobbleCode\BillingBundle\Manager\ChargeRequestManager
+        parent: wobblecode_manager.document_manager
+        calls:
+            - [setDocument, ["WobbleCodeBillingBundle:ChargeRequest"]]
+            - [setAccountManager, ["@wobblecode_billing.account_manager"]]
+            - [setInvoiceManager, ["@wobblecode_billing.invoice_manager"]]
+            - [setInvoiceProfileManager, ["@wobblecode_billing.invoice_profile_manager"]]
+            - [setOrganizationManager, ["@wobblecode_user.organization_manager"]]
+    wobblecode_billing.exchange_rate:
+        class: WobbleCode\BillingBundle\ExchangeRate\ExchangeRate
+        arguments:
+            - "@doctrine_mongodb.odm.document_manager"
+
+    wobblecode_billing.form.type.charge_request:
+        class: WobbleCode\BillingBundle\Form\Type\ChargeRequestType
+        arguments:
+            - "%wobble_code_user.class.organization%"
+        tags:
+            - { name: form.type, alias: wc_billing_charge_request }
+
+    wobblecode_billing.form.type.invoice:
+        class: WobbleCode\BillingBundle\Form\Type\InvoiceType
+        arguments:
+            - "%wobble_code_user.class.organization%"
+        tags:
+            - { name: form.type, alias: wc_billing_invoice }
+
+    wobblecode_billing.form.type.invoice_profile:
+        class: WobbleCode\BillingBundle\Form\Type\InvoiceProfileType
+        arguments:
+            - "%wobble_code_user.class.organization%"
+        tags:
+            - { name: form.type, alias: wc_billing_invoice_profile }
+
+    wobblecode_billing.form.type.payment_profile:
+        class: WobbleCode\BillingBundle\Form\Type\PaymentProfileType
+        arguments:
+            - "%wobble_code_user.class.organization%"
+        tags:
+            - { name: form.type, alias: wc_billing_payment_profile }

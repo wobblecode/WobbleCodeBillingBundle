@@ -1,0 +1,24 @@
+{% extends 'WobbleCodeAdminBundle::layout.html.twig' %}
+
+{% block app_content_title %}
+  {{ 'WobbleCodeBilling.view.Admin.AccountStatement.new.title'|trans }}
+{% endblock %}
+
+{% block app_content_content %}
+  <div class="row">
+    <div class="col-sm-7">
+      <p class="lead"> {{ 'WobbleCodeBilling.view.Admin.AccountStatement.new.subtitle'|trans }}</p>
+
+      <form action="{{ path('admin_billing_account-statement_create') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        <hr/>
+        <button class="btn btn-primary" type="submit">{{ 'WobbleCodeBilling.view.Admin.AccountStatement.new.button.create'|trans }}</button>
+        <a class="btn btn-link" href="{{ path('admin_billing_account-statement') }}">
+          {{ 'WobbleCodeBilling.view.Admin.AccountStatement.new.link.back'|trans }}
+        </a>
+      </form>
+
+    </div>
+  </div>
+{% endblock %}
