@@ -1,4 +1,4 @@
 
 # WobbleCodeBillingBundle
 
-Billing common documents and features
+Not ready for production - Experimental bundle
